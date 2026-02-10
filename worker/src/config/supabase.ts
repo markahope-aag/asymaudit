@@ -218,7 +218,7 @@ export interface Database {
   };
 }
 
-export const supabase = createClient<Database>(
+export const supabase = createClient<any>(
   env.SUPABASE_URL,
   env.SUPABASE_SERVICE_KEY,
   {

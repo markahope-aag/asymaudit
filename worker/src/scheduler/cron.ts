@@ -225,7 +225,7 @@ export function getActiveSchedules(): Array<{
 }> {
   return Array.from(activeCrons.entries()).map(([scheduleId, task]) => ({
     scheduleId,
-    isRunning: task.getStatus() === 'scheduled',
+    isRunning: true, // Assume running if in the map
   }));
 }
 

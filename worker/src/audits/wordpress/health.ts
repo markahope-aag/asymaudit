@@ -69,19 +69,19 @@ export class WordPressHealthAudit extends BaseAudit {
     this.validateCredentials(integration.credentials, ['url']);
 
     const credentials: WordPressCredentials = {
-      url: integration.credentials.url,
-      rest_api_key: integration.credentials.rest_api_key,
-      username: integration.credentials.username,
-      password: integration.credentials.password,
-      application_password: integration.credentials.application_password,
+      url: integration.credentials['url'],
+      rest_api_key: integration.credentials['rest_api_key'],
+      username: integration.credentials['username'],
+      password: integration.credentials['password'],
+      application_password: integration.credentials['application_password'],
     };
 
     const config: WordPressConfig = {
-      check_plugins: integration.config.check_plugins !== false,
-      check_themes: integration.config.check_themes !== false,
-      check_updates: integration.config.check_updates !== false,
-      check_security: integration.config.check_security !== false,
-      timeout: integration.config.timeout || 30000,
+      check_plugins: integration.config['check_plugins'] !== false,
+      check_themes: integration.config['check_themes'] !== false,
+      check_updates: integration.config['check_updates'] !== false,
+      check_security: integration.config['check_security'] !== false,
+      timeout: integration.config['timeout'] || 30000,
     };
 
     return new WordPressClient(credentials, config);
@@ -170,47 +170,47 @@ export class WordPressHealthAudit extends BaseAudit {
     const metrics: Record<string, number> = {};
 
     // Basic counts
-    metrics.plugins_total = data.plugins.length;
-    metrics.plugins_active = data.plugins.filter(p => p.status === 'active').length;
-    metrics.plugins_inactive = data.plugins.filter(p => p.status === 'inactive').length;
+    metrics['plugins_total'] = data.plugins.length;
+    metrics['plugins_active'] = data.plugins.filter(p => p.status === 'active').length;
+    metrics['plugins_inactive'] = data.plugins.filter(p => p.status === 'inactive').length;
     
-    metrics.themes_total = data.themes.length;
-    metrics.themes_active = data.themes.filter(t => t.status === 'active').length;
+    metrics['themes_total'] = data.themes.length;
+    metrics['themes_active'] = data.themes.filter(t => t.status === 'active').length;
     
-    metrics.users_total = data.users.length;
-    metrics.users_admin = data.users.filter(u => u.roles.includes('administrator')).length;
+    metrics['users_total'] = data.users.length;
+    metrics['users_admin'] = data.users.filter(u => u.roles.includes('administrator')).length;
     
-    metrics.posts_count = data.content_stats.posts_count;
-    metrics.pages_count = data.content_stats.pages_count;
-    metrics.media_count = data.content_stats.media_count;
+    metrics['posts_count'] = data.content_stats.posts_count;
+    metrics['pages_count'] = data.content_stats.pages_count;
+    metrics['media_count'] = data.content_stats.media_count;
 
     // Security metrics
-    metrics.ssl_enabled = data.ssl_check.isSecure ? 1 : 0;
-    metrics.connection_success = data.connection_test.success ? 1 : 0;
-    metrics.response_time_ms = data.connection_test.responseTime || 0;
+    metrics['ssl_enabled'] = data.ssl_check.isSecure ? 1 : 0;
+    metrics['connection_success'] = data.connection_test.success ? 1 : 0;
+    metrics['response_time_ms'] = data.connection_test.responseTime || 0;
 
     // Plugin analysis
     const outdatedPlugins = this.analyzePluginUpdates(data.plugins);
-    metrics.plugins_outdated = outdatedPlugins.length;
-    metrics.plugins_security_risk = this.countSecurityRiskPlugins(data.plugins);
+    metrics['plugins_outdated'] = outdatedPlugins.length;
+    metrics['plugins_security_risk'] = this.countSecurityRiskPlugins(data.plugins);
 
     // Theme analysis
     const activeTheme = data.themes.find(t => t.status === 'active');
-    metrics.active_theme_outdated = activeTheme && this.isThemeOutdated(activeTheme) ? 1 : 0;
-    metrics.child_theme_used = activeTheme && this.isChildTheme(activeTheme) ? 1 : 0;
+    metrics['active_theme_outdated'] = activeTheme && this.isThemeOutdated(activeTheme) ? 1 : 0;
+    metrics['child_theme_used'] = activeTheme && this.isChildTheme(activeTheme) ? 1 : 0;
 
     // WordPress core analysis
     if (data.site_info) {
-      metrics.wp_version_latest = this.isWordPressVersionLatest(data.site_info) ? 1 : 0;
+      metrics['wp_version_latest'] = this.isWordPressVersionLatest(data.site_info) ? 1 : 0;
     }
 
     // Site health score
     if (data.site_health) {
-      metrics.site_health_score = this.calculateSiteHealthScore(data.site_health);
+      metrics['site_health_score'] = this.calculateSiteHealthScore(data.site_health);
     }
 
     // Calculate overall health score
-    metrics.overall_health_score = this.calculateOverallHealthScore(metrics, data);
+    metrics['overall_health_score'] = this.calculateOverallHealthScore(metrics, data);
 
     return metrics;
   }
@@ -305,13 +305,13 @@ export class WordPressHealthAudit extends BaseAudit {
   private calculateOverallHealthScore(metrics: Record<string, number>, data: WordPressHealthData): number {
     // Calculate weighted score based on different factors
     const scores = [
-      { value: metrics.ssl_enabled * 100, weight: 0.2 }, // Security: 20%
-      { value: metrics.connection_success * 100, weight: 0.1 }, // Connectivity: 10%
-      { value: metrics.wp_version_latest * 100, weight: 0.15 }, // Core updates: 15%
-      { value: Math.max(0, 100 - (metrics.plugins_outdated * 10)), weight: 0.15 }, // Plugin health: 15%
-      { value: Math.max(0, 100 - (metrics.plugins_security_risk * 20)), weight: 0.2 }, // Security risks: 20%
-      { value: metrics.child_theme_used * 100, weight: 0.1 }, // Theme best practices: 10%
-      { value: metrics.site_health_score || 50, weight: 0.1 }, // Site health: 10%
+      { value: (metrics['ssl_enabled'] || 0) * 100, weight: 0.2 }, // Security: 20%
+      { value: (metrics['connection_success'] || 0) * 100, weight: 0.1 }, // Connectivity: 10%
+      { value: (metrics['wp_version_latest'] || 0) * 100, weight: 0.15 }, // Core updates: 15%
+      { value: Math.max(0, 100 - ((metrics['plugins_outdated'] || 0) * 10)), weight: 0.15 }, // Plugin health: 15%
+      { value: Math.max(0, 100 - ((metrics['plugins_security_risk'] || 0) * 20)), weight: 0.2 }, // Security risks: 20%
+      { value: (metrics['child_theme_used'] || 0) * 100, weight: 0.1 }, // Theme best practices: 10%
+      { value: metrics['site_health_score'] || 50, weight: 0.1 }, // Site health: 10%
     ];
 
     return this.calculateWeightedScore(scores);

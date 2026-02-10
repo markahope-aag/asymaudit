@@ -59,10 +59,11 @@ export function setupManualTriggers(app: Express): void {
     const apiKey = req.body.apiKey || req.headers['x-api-key'];
     
     if (!apiKey || apiKey !== env.WORKER_API_KEY) {
-      return res.status(401).json({ 
+      res.status(401).json({ 
         success: false,
         error: 'Unauthorized: Invalid API key' 
       });
+      return;
     }
     
     next();
@@ -86,12 +87,14 @@ export function setupManualTriggers(app: Express): void {
         data: stats,
         timestamp: new Date().toISOString(),
       });
+      return;
     } catch (error) {
       logger.error({ error }, 'Failed to get queue status');
       res.status(500).json({
         success: false,
         error: 'Failed to get queue status',
       });
+      return;
     }
   });
 
@@ -108,10 +111,11 @@ export function setupManualTriggers(app: Express): void {
         .single();
 
       if (error || !run) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: 'Audit run not found',
         });
+        return;
       }
 
       // If run is pending or collecting, try to get job status from queue
@@ -130,6 +134,7 @@ export function setupManualTriggers(app: Express): void {
         },
         timestamp: new Date().toISOString(),
       });
+      return;
 
     } catch (error) {
       logger.error({ error }, 'Failed to get audit status');
@@ -137,6 +142,7 @@ export function setupManualTriggers(app: Express): void {
         success: false,
         error: 'Failed to get audit status',
       });
+      return;
     }
   });
 
@@ -147,10 +153,11 @@ export function setupManualTriggers(app: Express): void {
 
       // Validate required fields
       if (!clientId || !auditType) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'Missing required fields: clientId and auditType',
         });
+        return;
       }
 
       // Validate client exists
@@ -162,10 +169,11 @@ export function setupManualTriggers(app: Express): void {
         .single();
 
       if (clientError || !client) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: 'Client not found or inactive',
         });
+        return;
       }
 
       // Create audit run
@@ -180,16 +188,17 @@ export function setupManualTriggers(app: Express): void {
             triggered_at: new Date().toISOString(),
             ...metadata,
           },
-        })
+        } as any)
         .select()
         .single();
 
       if (runError || !run) {
         logger.error({ error: runError }, 'Failed to create audit run');
-        return res.status(500).json({
+        res.status(500).json({
           success: false,
           error: 'Failed to create audit run',
         });
+        return;
       }
 
       // Add job to queue
@@ -219,6 +228,7 @@ export function setupManualTriggers(app: Express): void {
         },
         timestamp: new Date().toISOString(),
       });
+      return;
 
     } catch (error) {
       logger.error({ error }, 'Failed to trigger audit');
@@ -226,6 +236,7 @@ export function setupManualTriggers(app: Express): void {
         success: false,
         error: 'Failed to trigger audit',
       });
+      return;
     }
   });
 
@@ -235,10 +246,11 @@ export function setupManualTriggers(app: Express): void {
       const { clientId, priority }: TriggerAllRequest = req.body;
 
       if (!clientId) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'Missing required field: clientId',
         });
+        return;
       }
 
       // Validate client exists and get integrations
@@ -250,10 +262,11 @@ export function setupManualTriggers(app: Express): void {
         .single();
 
       if (clientError || !client) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: 'Client not found or inactive',
         });
+        return;
       }
 
       // Get all active integrations for client
@@ -264,17 +277,19 @@ export function setupManualTriggers(app: Express): void {
         .eq('is_active', true);
 
       if (integrationsError) {
-        return res.status(500).json({
+        res.status(500).json({
           success: false,
           error: 'Failed to fetch client integrations',
         });
+        return;
       }
 
       if (!integrations || integrations.length === 0) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: 'No active integrations found for client',
         });
+        return;
       }
 
       // Collect all audit types for the client's platforms
@@ -308,7 +323,7 @@ export function setupManualTriggers(app: Express): void {
                 triggered_by: 'manual_full_suite',
                 triggered_at: new Date().toISOString(),
               },
-            })
+            } as any)
             .select()
             .single();
 
@@ -335,7 +350,7 @@ export function setupManualTriggers(app: Express): void {
           results.push({
             auditType,
             runId: run.id,
-            jobId: job.id,
+            jobId: job.id || 'unknown',
             status: 'queued',
           });
 
@@ -371,6 +386,7 @@ export function setupManualTriggers(app: Express): void {
         },
         timestamp: new Date().toISOString(),
       });
+      return;
 
     } catch (error) {
       logger.error({ error }, 'Failed to trigger full audit suite');
@@ -378,6 +394,7 @@ export function setupManualTriggers(app: Express): void {
         success: false,
         error: 'Failed to trigger full audit suite',
       });
+      return;
     }
   });
 

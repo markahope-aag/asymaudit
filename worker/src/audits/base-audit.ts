@@ -18,17 +18,19 @@ export interface ClientIntegration {
 }
 
 export abstract class BaseAudit {
-  protected readonly logger = logger.child({
-    auditType: this.getAuditType(),
-    clientId: this.clientId,
-    runId: this.runId,
-  });
+  protected readonly logger: any;
 
   constructor(
-    protected supabase: SupabaseClient<Database>,
+    protected supabase: SupabaseClient<any>,
     protected clientId: string,
     protected runId: string
-  ) {}
+  ) {
+    this.logger = logger.child({
+      auditType: this.getAuditType(),
+      clientId: this.clientId,
+      runId: this.runId,
+    });
+  }
 
   /**
    * Main execution method - orchestrates the entire audit process
@@ -52,7 +54,7 @@ export abstract class BaseAudit {
       // 3. Update run with raw data
       await this.supabase
         .from('audit_runs')
-        .update({ raw_data: result.rawData })
+        .update({ raw_data: result.rawData } as any)
         .eq('id', this.runId);
 
       // 4. Store metrics as snapshots for trending
@@ -67,7 +69,7 @@ export abstract class BaseAudit {
 
         const { error: snapshotError } = await this.supabase
           .from('audit_snapshots')
-          .insert(snapshots);
+          .insert(snapshots as any);
 
         if (snapshotError) {
           this.logger.error({ error: snapshotError }, 'Failed to insert audit snapshots');
@@ -172,7 +174,7 @@ export abstract class BaseAudit {
 
     const { error } = await this.supabase
       .from('audit_runs')
-      .update(update)
+      .update(update as any)
       .eq('id', this.runId);
 
     if (error) {

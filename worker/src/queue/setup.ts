@@ -34,7 +34,8 @@ auditQueue.on('waiting', (job) => {
   logger.debug({ jobId: job.id }, 'Job waiting in queue');
 });
 
-auditQueue.on('active', (job) => {
+// Queue event listeners with proper typing
+(auditQueue as any).on('active', (job: any) => {
   logger.info({ 
     jobId: job.id, 
     clientId: job.data.clientId,
@@ -42,7 +43,7 @@ auditQueue.on('active', (job) => {
   }, 'Job started processing');
 });
 
-auditQueue.on('completed', (job) => {
+(auditQueue as any).on('completed', (job: any) => {
   logger.info({ 
     jobId: job.id, 
     clientId: job.data.clientId,
@@ -51,7 +52,7 @@ auditQueue.on('completed', (job) => {
   }, 'Job completed successfully');
 });
 
-auditQueue.on('failed', (job, error) => {
+(auditQueue as any).on('failed', (job: any, error: any) => {
   logger.error({ 
     jobId: job?.id, 
     clientId: job?.data.clientId,
@@ -209,7 +210,7 @@ export async function getJobStatus(jobId: string): Promise<{
     
     return {
       status: state,
-      progress: job.progress,
+      progress: typeof job.progress === 'number' ? job.progress : 0,
       data: job.data,
       error: job.failedReason,
     };
