@@ -16,7 +16,8 @@ export async function initScheduler(): Promise<void> {
       .eq('is_active', true);
 
     if (error) {
-      throw new Error(`Failed to load schedules: ${error.message}`);
+      logger.warn({ error: error.message }, 'Could not load schedules from Supabase (table may not exist yet), skipping scheduler');
+      return;
     }
 
     if (!schedules || schedules.length === 0) {
