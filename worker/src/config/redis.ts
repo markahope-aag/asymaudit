@@ -3,7 +3,7 @@ import { env } from './env';
 import { logger } from '../utils/logger';
 
 export const redis = new Redis(env.REDIS_URL, {
-  maxRetriesPerRequest: 3,
+  maxRetriesPerRequest: null,
   enableReadyCheck: false,
   lazyConnect: true,
 });
