@@ -3,49 +3,51 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light theme: White bg, Graphite text, Legacy Blue primary, Grey borders, Gold accents */
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 11.8%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 11.8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 0 0% 11.8%;
+    --primary: 243.8 48.8% 25.3%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 11.8%;
+    --muted: 240 2.2% 34.9%;
+    --muted-foreground: 240 2.2% 54.9%;
+    --accent: 41.8 49.3% 56.7%;
+    --accent-foreground: 0 0% 11.8%;
+    --destructive: 345.3 82.6% 40.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 2.2% 80%;
+    --input: 240 2.2% 80%;
+    --ring: 243.8 48.8% 25.3%;
     --radius: 0.5rem;
   }
 
+  /* Dark theme: Graphite bg, White text, Legacy Blue primary, Dark Grey cards, Gold accents */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    --background: 0 0% 11.8%;
+    --foreground: 0 0% 100%;
+    --card: 240 0.8% 25.3%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 0.8% 25.3%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 243.8 48.8% 25.3%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 0.8% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 2.2% 34.9%;
+    --muted-foreground: 240 2.2% 70%;
+    --accent: 41.8 49.3% 56.7%;
+    --accent-foreground: 0 0% 11.8%;
+    --destructive: 345.3 82.6% 40.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 2.2% 34.9%;
+    --input: 240 2.2% 34.9%;
+    --ring: 41.8 49.3% 56.7%;
   }
 }
 
@@ -56,4 +58,35 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Pulse animation for active audit status */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-status-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* Score gauge animation */
+@keyframes gauge-fill {
+  from { stroke-dashoffset: 283; }
+}
+
+.animate-gauge-fill {
+  animation: gauge-fill 1s ease-out forwards;
+}
+
+/* Skeleton loading shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--border)) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
 }

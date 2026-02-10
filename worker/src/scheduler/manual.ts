@@ -24,7 +24,8 @@ const PLATFORM_AUDITS: Record<string, string[]> = {
     'wordpress_health',
     'wordpress_seo',
     'wordpress_performance',
-    'wordpress_security'
+    'wordpress_security',
+    'wordpress_forms'
   ],
   google_analytics: [
     'ga4_config',
@@ -39,6 +40,9 @@ const PLATFORM_AUDITS: Record<string, string[]> = {
   ],
   google_search_console: [
     'gsc_coverage'
+  ],
+  cloudflare: [
+    'cloudflare_config'
   ],
   moz: [
     'seo_backlinks'

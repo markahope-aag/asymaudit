@@ -8,23 +8,36 @@ import { AuditJobData } from './setup';
 
 // Import audit classes
 import { WordPressHealthAudit } from '../audits/wordpress/health';
-// import { WordPressSEOAudit } from '../audits/wordpress/seo';
-// ... other audit imports will be added as implemented
+import { WordPressSEOAudit } from '../audits/wordpress/seo';
+import { WordPressPerformanceAudit } from '../audits/wordpress/performance';
+import { WordPressSecurityAudit } from '../audits/wordpress/security';
+import { WordPressFormsAudit } from '../audits/wordpress/forms';
+import { GA4ConfigAudit } from '../audits/google-analytics/config';
+import { GA4DataQualityAudit } from '../audits/google-analytics/data-quality';
+import { GoogleAdsAccountAudit } from '../audits/google-ads/account';
+import { GoogleAdsCampaignsAudit } from '../audits/google-ads/campaigns';
+import { GTMContainerAudit } from '../audits/google-tag-manager/container';
+import { GSCCoverageAudit } from '../audits/google-search-console/coverage';
+import { CloudFlareConfigAudit } from '../audits/cloudflare/config';
+import { TechnicalSEOAudit } from '../audits/seo/technical';
+import { BacklinksAudit } from '../audits/seo/backlinks';
 
 // Audit class registry
 const AUDIT_MAP: Record<string, any> = {
   wordpress_health: WordPressHealthAudit,
-  // wordpress_seo: WordPressSEOAudit,
-  // wordpress_performance: WordPressPerformanceAudit,
-  // wordpress_security: WordPressSecurityAudit,
-  // ga4_config: GA4ConfigAudit,
-  // ga4_data_quality: GA4DataQualityAudit,
-  // google_ads_account: GoogleAdsAccountAudit,
-  // google_ads_campaigns: GoogleAdsCampaignsAudit,
-  // gtm_container: GTMContainerAudit,
-  // gsc_coverage: GSCCoverageAudit,
-  // seo_technical: TechnicalSEOAudit,
-  // seo_backlinks: BacklinksAudit,
+  wordpress_seo: WordPressSEOAudit,
+  wordpress_performance: WordPressPerformanceAudit,
+  wordpress_security: WordPressSecurityAudit,
+  wordpress_forms: WordPressFormsAudit,
+  ga4_config: GA4ConfigAudit,
+  ga4_data_quality: GA4DataQualityAudit,
+  google_ads_account: GoogleAdsAccountAudit,
+  google_ads_campaigns: GoogleAdsCampaignsAudit,
+  gtm_container: GTMContainerAudit,
+  gsc_coverage: GSCCoverageAudit,
+  cloudflare_config: CloudFlareConfigAudit,
+  seo_technical: TechnicalSEOAudit,
+  seo_backlinks: BacklinksAudit,
 };
 
 export async function processAuditJob(job: Job<AuditJobData>): Promise<void> {
